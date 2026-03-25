@@ -1,38 +1,197 @@
 import "./App.css";
 import vincePic from "./assets/vincepicture.jpg";
+import { useRef, useState } from "react";
+
+// 🔥 Load ALL assets
+const allImages = import.meta.glob('./assets/*.{png,jpg,jpeg,gif,webp}', { eager: true });
+const allVideos = import.meta.glob('./assets/*.{mp4,webm,ogg}', { eager: true });
+
+// 🔥 Helper: get exact file
+const getFile = (media, name) => {
+  return Object.fromEntries(
+    Object.entries(media).filter(([path]) =>
+      path.includes(name)
+    )
+  );
+};
+
+//////////////////////////////
+// ✅ TRANSPORENT PROJECT
+//////////////////////////////
+const transporentImages = {
+  ...getFile(allImages, 'renterpage'),
+  ...getFile(allImages, 'adminpage')
+};
+
+const transporentVideos = {
+  ...getFile(allVideos, 'transporentvid')
+};
+
+//////////////////////////////
+// ✅ POS SYSTEM
+//////////////////////////////
+const posImages = {
+  ...getFile(allImages, 'pos.png'),
+  ...getFile(allImages, 'pos1.png'),
+  ...getFile(allImages, 'pos2.png')
+};
+
+const posVideos = {};
+
+//////////////////////////////
+// ✅ SCHOOL SYSTEM
+//////////////////////////////
+const schoolImages = {
+  ...getFile(allImages, 'attendance'),
+  ...getFile(allImages, 'faculty.panel'),
+  ...getFile(allImages, 'Registrar.panel'),
+  ...getFile(allImages, 'studentperformance')
+};
+
+const schoolVideos = {};
+
+//////////////////////////////
+// ✅ GUARD APP
+//////////////////////////////
+const guardpImages = {
+  ...getFile(allImages, 'gaurd1'),
+  ...getFile(allImages, 'gaurdsamp'),
+  ...getFile(allImages, 'guards')
+};
+
+const guardpVideos = {};
 
 export default function App() {
+  const homeRef = useRef(null);
+  const aboutRef = useRef(null);
+  const skillsRef = useRef(null);
+  const contactRef = useRef(null);
+
+  const scrollToSection = (ref) => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // 🔥 Index per project
+  const [transporentIndex, setTransporentIndex] = useState(0);
+  const [posIndex, setPosIndex] = useState(0);
+  const [schoolIndex, setSchoolIndex] = useState(0);
+  const [guardpIndex, setGuardpIndex] = useState(0);
+
+  // 🔥 Media renderer
+  const renderSingleMedia = (images, videos, currentIndex, setIndex) => {
+    const allMedia = [...Object.values(images), ...Object.values(videos)];
+    if (allMedia.length === 0) return <p>No media found</p>;
+
+    const currentMedia = allMedia[currentIndex % allMedia.length];
+
+    const isImage =
+      currentMedia.default.endsWith(".jpg") ||
+      currentMedia.default.endsWith(".png") ||
+      currentMedia.default.endsWith(".jpeg") ||
+      currentMedia.default.endsWith(".gif") ||
+      currentMedia.default.endsWith(".webp");
+
+    return (
+      <div
+        className="single-media-container"
+        onClick={() =>
+          setIndex((prev) => (prev + 1) % allMedia.length)
+        }
+      >
+        {isImage ? (
+          <img
+            src={currentMedia.default}
+            alt="project"
+            className="project-media-single"
+          />
+        ) : (
+          <video controls className="project-media-single">
+            <source src={currentMedia.default} />
+          </video>
+        )}
+
+        <div className="media-indicator">
+          {currentIndex + 1} / {allMedia.length}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container">
+      {/* NAVBAR */}
+      <nav className="navbar">
+        <div className="nav-brand">Vince S. Rivera</div>
+        <ul className="nav-links">
+          <li><button onClick={() => scrollToSection(homeRef)} className="nav-btn">Home</button></li>
+          <li><button onClick={() => scrollToSection(aboutRef)} className="nav-btn">About</button></li>
+          <li><button onClick={() => scrollToSection(skillsRef)} className="nav-btn">Skills</button></li>
+          <li><button onClick={() => scrollToSection(contactRef)} className="nav-btn">Contact</button></li>
+        </ul>
+      </nav>
 
       {/* HERO */}
-      <section className="hero">
-        <div className="profile">
-          <img
-            src={vincePic}
-            alt="Profile"
-            className="profile-img"
-          />
-        </div>
-
+      <section className="hero" ref={homeRef}>
+        <img src={vincePic} alt="Profile" className="profile-img" />
         <h1>Vince S. Rivera</h1>
-        <p className="title">Information Technology</p>
+        <p className="title">Aspiring Web Developer & Software Developer</p>
         <p className="subtitle">
-          I build modern web and mobile applications with clean UI and strong functionality.
+          I am passionate about building user-friendly websites and continuously learning modern web technologies.
         </p>
       </section>
 
+      {/* ABOUT */}
+      <section className="section" ref={aboutRef}>
+        <h2>About</h2>
+
+        <div className="about-container">
+          <div className="about-image">
+            <img src={vincePic} alt="Vince" className="about-img" />
+          </div>
+
+          <div className="about-text">
+            <p className="about-description">
+              I am a Full-Stack Developer passionate about building scalable web applications and intuitive experiences using React, Firebase, and SQL technologies.
+            </p>
+            <p className="about-description">
+              I focus on clean code and modern UI while collaborating through Git & GitHub.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h3>Education</h3>
+          <div className="card">
+            <h4>BS Information Technology</h4>
+            <p>Bulacan State University – Meneses Campus</p>
+            <p>Graduate</p>
+          </div>
+        </div>
+      </section>
+
       {/* SKILLS */}
-      <section className="section">
+      <section className="section" ref={skillsRef}>
         <h2>Skills</h2>
-        <div className="grid">
-          <div className="card">HTML, CSS, JavaScript</div>
-          <div className="card">React.js</div>
-          <div className="card">Firebase</div>
-          <div className="card">SQL / PostgreSQL</div>
-          <div className="card">Android Studio</div>
-          <div className="card">.NET (Basic)</div>
-          <div className="card">Git & GitHub</div>
+
+        <div className="skills-container">
+          <div className="skill-category">
+            <h3>Frontend</h3>
+            <div className="skills-list">
+              <span className="skill-badge">HTML</span>
+              <span className="skill-badge">CSS</span>
+              <span className="skill-badge">JavaScript</span>
+              <span className="skill-badge">React.js</span>
+            </div>
+          </div>
+
+          <div className="skill-category">
+            <h3>Backend</h3>
+            <div className="skills-list">
+              <span className="skill-badge">Node.js</span>
+              <span className="skill-badge">SQL</span>
+              <span className="skill-badge">Firebase</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -40,90 +199,66 @@ export default function App() {
       <section className="section">
         <h2>Projects</h2>
 
+        {/* Transporent */}
         <div className="card">
-          <h3>Transporent App (Capstone)</h3>
-          <p>
-            Car rental app with Google Maps integration for real-time location tracking.
-          </p>
+          <div className="project-container">
+            <div className="project-media-section">
+              {renderSingleMedia(transporentImages, transporentVideos, transporentIndex, setTransporentIndex)}
+            </div>
+            <div className="project-text">
+              <h3>Transporent App (Capstone)</h3>
+              <p>Car rental app with maps integration.</p>
+            </div>
+          </div>
         </div>
 
+        {/* POS */}
         <div className="card">
-          <h3>POS System Website</h3>
-          <p>
-            Web-based system for managing sales transactions, products, and reports.
-          </p>
+          <div className="project-container">
+            <div className="project-media-section">
+              {renderSingleMedia(posImages, posVideos, posIndex, setPosIndex)}
+            </div>
+            <div className="project-text">
+              <h3>POS System</h3>
+              <p>Sales and reporting system.</p>
+            </div>
+          </div>
         </div>
 
+        {/* School */}
         <div className="card">
-          <h3>School Management System</h3>
-          <p>
-            Platform with student login, registrar panel, and faculty management using Google Sheets.
-          </p>
+          <div className="project-container">
+            <div className="project-media-section">
+              {renderSingleMedia(schoolImages, schoolVideos, schoolIndex, setSchoolIndex)}
+            </div>
+            <div className="project-text">
+              <h3>School Management System</h3>
+              <p>Student and faculty management platform.</p>
+            </div>
+          </div>
         </div>
 
+        {/* Guard */}
         <div className="card">
-          <h3>Guard Incident Reporting App</h3>
-          <p>
-            Mobile app using Firebase to submit and track incident reports.
-          </p>
-        </div>
-      </section>
-
-      {/* EXPERIENCE */}
-      <section className="section">
-        <h2>Experience</h2>
-
-        <div className="card">
-          <h3>Intern Web Developer</h3>
-          <p>Kenneth G. Ads (2025)</p>
-          <ul>
-            <li>Developed inventory system</li>
-            <li>Built login and attendance tracking</li>
-            <li>Created conversion tools</li>
-          </ul>
-        </div>
-
-        <div className="card">
-          <h3>Bulacan State University Internship</h3>
-          <p>Focused on improving web development skills</p>
-        </div>
-      </section>
-
-      {/* EDUCATION */}
-      <section className="section">
-        <h2>Education</h2>
-        <div className="card">
-          <h3>Bachelor of Science in Information Technology (BSIT)</h3>
-          <p>Bulacan State University – Meneses Campus</p>
-          <p>Graduate</p>
+          <div className="project-container">
+            <div className="project-media-section">
+              {renderSingleMedia(guardpImages, guardpVideos, guardpIndex, setGuardpIndex)}
+            </div>
+            <div className="project-text">
+              <h3>Guard Reporting App</h3>
+              <p>Incident reporting mobile app.</p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* CONTACT */}
-      <section className="section contact">
+      <section className="section contact" ref={contactRef}>
         <h2>Contact</h2>
-        <p>
-          📧 Email:{" "}
-          <a href="mailto:rivera.vince.s.400646@gmail.com">
-            rivera.vince.s.400646@gmail.com
-          </a>
-        </p>
-        <p>
-          📱 Phone: <a href="tel:09154112748">0915 411 2748</a>
-        </p>
-        <p>
-          🌐 Facebook:{" "}
-          <a
-            href="https://www.facebook.com/vince.rivera.457385"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            facebook.com/vince.rivera
-          </a>
-        </p>
-        <p>📍 Address: 135 Kabesang Imo St., Valenzuela City</p>
+        <p>📧 <a href="mailto:rivera.vince.s.400646@gmail.com">rivera.vince.s.400646@gmail.com</a></p>
+        <p>📱 <a href="tel:09154112748">0915 411 2748</a></p>
+        <p>📍 Valenzuela City</p>
       </section>
-
     </div>
   );
 }
