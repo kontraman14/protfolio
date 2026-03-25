@@ -192,7 +192,17 @@ export default function App() {
               <span className="skill-badge">Firebase</span>
             </div>
           </div>
+
+           <div className="skill-category">
+            <h3>Mobile & Other</h3>
+            <div className="skills-list">
+              <span className="skill-badge">Android Studio</span>
+              <span className="skill-badge">.NET</span>
+              <span className="skill-badge">Git & GitHub</span>
+            </div>
+          </div>
         </div>
+      
       </section>
 
       {/* PROJECTS */}
